@@ -1,22 +1,13 @@
-import { Box } from '../Box';
+import { Box } from '../../common/Box';
 import { ContactItem, ContactData, ButtonDelete } from './ContactList.styled';
-import { useSelector, useDispatch} from 'react-redux';
-import { getContacts, getFilter } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selecttVisibleContacts } from 'redux/selectors';
 import { deleteContact } from '../../redux/operations';
 
 const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-  console.log(contacts);
-  console.log(filter);
   const dispatch = useDispatch();
-  const getVisibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-  const visibleContacts = getVisibleContacts();
+  const visibleContacts = useSelector(selecttVisibleContacts);
+
   return (
     <Box
       p="16px"
@@ -30,9 +21,7 @@ const ContactList = () => {
             <ContactData>
               {name}: {number}
             </ContactData>
-            <ButtonDelete 
-            onClick={() => dispatch(deleteContact(id))}
-            >
+            <ButtonDelete onClick={() => dispatch(deleteContact(id))}>
               Delete
             </ButtonDelete>
           </ContactItem>

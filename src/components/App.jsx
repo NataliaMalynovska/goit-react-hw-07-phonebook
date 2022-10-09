@@ -3,33 +3,16 @@ import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Filter from './Filter';
 import { GlobalStyle } from './GlobalStyle';
-import { Box } from './Box';
-import { useDispatch } from 'react-redux';
-import { useSelector} from 'react-redux';
+import { Box } from '../common/Box';
 import { useEffect } from 'react';
-import { getContacts } from 'redux/selectors';
-
-import {fetchContacts, addContact} from 'redux/operations';
+import { useDispatch } from 'react-redux';
+import { fetchContacts } from 'redux/operations';
 
 const App = () => {
-
   const dispatch = useDispatch();
   useEffect(() => {
-dispatch(fetchContacts());
-  }, [dispatch])
-  const contacts = useSelector(getContacts);
-
-  const formSubmitHendler = ({ name, number }) => {
-    console.log({ name, number })
-    const newName = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-    if (newName) {
-      return alert(`Sorry, ${name} is already in your contacts`);
-    } else {
-      dispatch(addContact({name, number}));
-    }
-  };
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <Box
@@ -43,9 +26,7 @@ dispatch(fetchContacts());
     >
       <GlobalStyle />
       <Section title="Phonebook">
-        <ContactForm 
-        onSubmit={formSubmitHendler} 
-        />
+        <ContactForm />
         <Section title="Contacts">
           <Filter />
           <ContactList />

@@ -49,7 +49,6 @@ const contactsSlice = createSlice({
           state.error = action.payload;
         }
       ),
-
   // extraReducers: {
   //   [fetchContacts.pending](state) {
   //     state.isLoading = true;
@@ -99,5 +98,3 @@ export const clickReducer = persistReducer(
   persistConfig,
   contactsSlice.reducer
 );
-
-// export const { addContacts, deleteContacts } = contactsSlice.actions;

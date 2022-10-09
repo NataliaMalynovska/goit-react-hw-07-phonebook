@@ -1,9 +1,11 @@
-import PropTypes from 'prop-types';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as yup from 'yup';
 import styled from 'styled-components';
-import { Box } from '../Box';
+import schema from '../../common/schema';
+import { Box } from '../../common/Box';
 import { Label, ButtonSubmit } from './ContactForm.styled';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectContacts } from '../../redux/selectors';
+import { addContact } from '../../redux/operations';
 
 const BoxForm = styled(Form)`
   display: flex;
@@ -32,33 +34,29 @@ const Error = styled(ErrorMessage)`
   font-size: 16px;
   color: Salmon;
 `;
-const namePattern =
-  "^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$";
-const nameErr =
-  "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan";
-const numberPattern =
-  /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/;
-const numberErr =
-  'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +';
-const errorMessage = 'This field is required';
 
-const schema = yup.object().shape({
-  name: yup.string().required(errorMessage).matches(namePattern, nameErr),
-  number: yup
-    .string()
-    .min(6, 'Too Short!')
-    .max(16, 'Too Long!')
-    .required(errorMessage)
-    .matches(numberPattern, numberErr),
-});
 const initialValues = {
   name: '',
   number: '',
 };
 
-const ContactForm = ({ onSubmit }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
+
   const handleSubmit = (values, actions) => {
-    onSubmit(values);
+    const { name, number } = values;
+    const newName = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    const newNumber = contacts.find(contact => contact.number === number);
+    if (newName) {
+      return alert(`Sorry, ${name} is already in your contacts`);
+    } else if (newNumber) {
+      return alert(`Sorry, ${number} is already in your contacts`);
+    } else {
+      dispatch(addContact({ name, number }));
+    }
     actions.resetForm();
   };
   return (
@@ -90,7 +88,5 @@ const ContactForm = ({ onSubmit }) => {
     </Box>
   );
 };
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+
 export default ContactForm;
